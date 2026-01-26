@@ -3,6 +3,30 @@
 # !!!   DO NOT MODIFY THIS FILE BY YOURSELF   !!!
 # -----------------------------------------------
 
+type CategoriesListOutput {
+  categories: [CategoryModel!]!
+  message: String!
+}
+
+type CategoryModel {
+  color: String
+  createdAt: DateTimeISO!
+  id: ID!
+  name: String!
+  updatedAt: DateTimeISO!
+  userId: String!
+}
+
+type CategoryOutput {
+  category: CategoryModel!
+  message: String!
+}
+
+input CreateCategoryInput {
+  color: String
+  name: String!
+}
+
 input CreateTransactionInput {
   amount: Float!
   categoryId: String!
@@ -38,10 +62,13 @@ type LoginOutput {
 }
 
 type Mutation {
+  createCategory(data: CreateCategoryInput!): CategoryOutput!
   createTransaction(data: CreateTransactionInput!): TransactionOutput!
+  deleteCategory(id: String!): String!
   deleteTransaction(id: String!): String!
   login(data: LoginInput!): LoginOutput!
   register(data: RegisterInput!): RegisterOutput!
+  updateCategory(data: UpdateCategoryInput!, id: String!): CategoryOutput!
   updateTransaction(data: UpdateTransactionInput!, id: String!): TransactionOutput!
 }
 
@@ -55,6 +82,7 @@ type PaginationInfo {
 }
 
 type Query {
+  listCategories: CategoriesListOutput!
   listTransactions(filters: ListTransactionsFiltersInput): TransactionsListOutput!
 }
 
@@ -98,6 +126,11 @@ type TransactionsListOutput {
   message: String!
   pagination: PaginationInfo!
   transactions: [TransactionModel!]!
+}
+
+input UpdateCategoryInput {
+  color: String
+  name: String
 }
 
 input UpdateTransactionInput {
