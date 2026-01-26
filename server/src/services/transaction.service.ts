@@ -45,12 +45,10 @@ export class TransactionService {
       userId: userId,
     };
 
-    // Filtro de tipo
     if (filters.type) {
       whereClause.type = filters.type;
     }
 
-    // Filtro de período
     if (filters.startDate || filters.endDate) {
       whereClause.registerDate = {};
       if (filters.startDate) {
@@ -63,7 +61,6 @@ export class TransactionService {
       }
     }
 
-    // Filtro de busca (search em título e descrição)
     if (filters.search) {
       whereClause.OR = [
         {
