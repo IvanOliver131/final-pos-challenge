@@ -16,10 +16,10 @@ enum TransactionType {
 }
 
 model User {
-  id       String @id @default(cuid())
+  id       String  @id @default(uuid())
   name     String
-  email    String @unique
-  password String
+  email    String  @unique
+  password String?
 
   transactions Transaction[]
   categories   Category[]
@@ -29,11 +29,12 @@ model User {
 }
 
 model Transaction {
-  id          String          @id @default(cuid())
-  title       String
-  amount      Float
-  type        TransactionType
-  description String?
+  id           String          @id @default(uuid())
+  title        String
+  amount       Float
+  type         TransactionType
+  description  String?
+  registerDate DateTime
 
   userId     String
   categoryId String
@@ -49,7 +50,7 @@ model Transaction {
 }
 
 model Category {
-  id    String  @id @default(cuid())
+  id    String  @id @default(uuid())
   name  String
   color String?
 
