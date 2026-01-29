@@ -47,3 +47,39 @@ export interface Vote {
   userId: string;
   createdAt: string;
 }
+
+export interface Transaction {
+  id: string;
+  title: string;
+  amount: number;
+  type: "INCOME" | "EXPENSE";
+  description?: string;
+  registerDate: string;
+  categoryId: string;
+  userId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Category {
+  id: string;
+  name: string;
+  color?: string;
+  userId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateTransactionInput {
+  title: string;
+  amount: number;
+  type: "INCOME" | "EXPENSE";
+  description?: string;
+  registerDate: string;
+  categoryId: string;
+}
+
+export interface CreateCategoryInput {
+  name: string;
+  color?: string;
+}

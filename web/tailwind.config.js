@@ -11,7 +11,10 @@ export default {
   ],
   theme: {
   	fontFamily: {
-  		sans: ['Inter', 'sans-serif']
+  		sans: [
+  			'Inter',
+  			'sans-serif'
+  		]
   	},
   	container: {
   		center: true,

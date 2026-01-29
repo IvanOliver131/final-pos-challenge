@@ -18,7 +18,6 @@ export function Profile() {
   const [name] = useState(user?.name || "");
 
   const handleSave = () => {
-    // Implementar salvamento de alterações
     console.log("Salvando alterações:", { name });
   };
 
@@ -89,7 +88,7 @@ export function Profile() {
             </Label>
           </div>
 
-          <Button type="submit" className="w-full bg-destructive">
+          <Button type="submit" className="w-full">
             Salvar alterações
           </Button>
 

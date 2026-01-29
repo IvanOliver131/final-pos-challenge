@@ -128,12 +128,7 @@ export function SignUp() {
               </Label>
             </div>
 
-            <Button
-              type="submit"
-              className="w-full"
-              variant={"destructive"}
-              disabled={loading}
-            >
+            <Button type="submit" disabled={loading}>
               Cadastrar
             </Button>
 

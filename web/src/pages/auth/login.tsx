@@ -110,12 +110,7 @@ export function Login() {
               <Label className="text-destructive">Recuperar senha</Label>
             </div> */}
 
-            <Button
-              type="submit"
-              className="w-full"
-              variant={"destructive"}
-              disabled={loading}
-            >
+            <Button type="submit" disabled={loading} className="bg-primary">
               Entrar
             </Button>
 
