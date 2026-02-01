@@ -4,10 +4,7 @@ import { Category } from "@/types";
 import { formatCurrency } from "@/utils/format-currency";
 
 interface CategoryCardProps {
-  category: Category & {
-    count: number;
-    amount: number;
-  };
+  category: Category;
 }
 
 export function CategoryCard({ category }: CategoryCardProps) {

@@ -35,6 +35,9 @@ interface ListTransactionsData {
     pagination: {
       total: number;
     };
+    monthIncome: number;
+    monthExpense: number;
+    totalBalance: number;
   };
 }
 
@@ -71,49 +74,28 @@ export function Dashboard() {
         toast.success("Transação criada com sucesso!");
       },
       onError(error) {
-        toast.error(error.message || "Erro ao criar transação");
+        toast.error(error.message ?? "Erro ao criar transação");
       },
     },
   );
 
-  const transactions = transactionsData?.listTransactions?.transactions || [];
-  const categories = categoriesData?.listCategories?.categories || [];
+  const transactions = transactionsData?.listTransactions?.transactions ?? [];
+  const monthIncome = transactionsData?.listTransactions?.monthIncome ?? 0;
+  const montExpense = transactionsData?.listTransactions?.monthExpense ?? 0;
+  const totalBalance = transactionsData?.listTransactions?.totalBalance ?? 0;
+  const categories = categoriesData?.listCategories?.categories ?? [];
 
-  const balance = transactions.reduce((acc, transaction) => {
-    if (transaction.type === "INCOME") {
-      return acc + transaction.amount;
-    } else {
-      return acc - transaction.amount;
-    }
-  }, 0);
-
-  const income = transactions
-    .filter((t) => t.type === "INCOME")
-    .reduce((acc, t) => acc + t.amount, 0);
-
-  const expenses = transactions
-    .filter((t) => t.type === "EXPENSE")
-    .reduce((acc, t) => acc + t.amount, 0);
-
-  const categoriesWithCount = categories.map((category) => {
-    const transactionCount = transactions.filter(
-      (t) => t.categoryId === category.id,
-    ).length;
-    const categoryAmount = transactions
-      .filter((t) => t.categoryId === category.id)
-      .reduce((acc, t) => {
-        if (t.type === "INCOME") {
-          return acc + t.amount;
-        } else {
-          return acc - t.amount;
-        }
-      }, 0);
-    return {
-      ...category,
-      count: transactionCount,
-      amount: categoryAmount,
-    };
-  });
+  const handleSubmit = (data: TransactionFormData) => {
+    createTransaction({
+      variables: {
+        data: {
+          ...data,
+          amount: Number(data.amount),
+          registerDate: new Date(data.registerDate).toISOString(),
+        },
+      },
+    });
+  };
 
   return (
     <div className="w-full h-full flex flex-col gap-6 p-6">
@@ -126,7 +108,9 @@ export function Dashboard() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(balance)}</div>
+            <div className="text-2xl font-bold">
+              {formatCurrency(totalBalance)}
+            </div>
           </CardContent>
         </Card>
 
@@ -139,7 +123,7 @@ export function Dashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">
-              {formatCurrency(income)}
+              {formatCurrency(monthIncome)}
             </div>
           </CardContent>
         </Card>
@@ -153,7 +137,7 @@ export function Dashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-red-600">
-              {formatCurrency(expenses)}
+              {formatCurrency(montExpense)}
             </div>
           </CardContent>
         </Card>
@@ -177,7 +161,7 @@ export function Dashboard() {
                 </Button>
               </Link>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-0 max-h-96 overflow-auto">
               <div>
                 {transactionsLoading ? (
                   <p className="text-gray-500">Carregando transações...</p>
@@ -223,16 +207,16 @@ export function Dashboard() {
               </Button>
             </Link>
           </CardHeader>
-          <CardContent>
+          <CardContent className="py-5 max-h-96 overflow-auto">
             <div className="space-y-3">
               {categoriesLoading ? (
                 <p className="text-gray-500 text-sm">
                   Carregando categorias...
                 </p>
-              ) : categoriesWithCount.length === 0 ? (
+              ) : categories.length === 0 ? (
                 <p className="text-gray-500 text-sm">Nenhuma categoria</p>
               ) : (
-                categoriesWithCount.map((category) => (
+                categories.map((category) => (
                   <CategoryCard key={category.id} category={category} />
                 ))
               )}
@@ -245,17 +229,7 @@ export function Dashboard() {
         isOpen={isCreateOpen}
         categories={categoriesData?.listCategories?.categories}
         onClose={() => setIsCreateOpen(false)}
-        onSubmit={(data: TransactionFormData) => {
-          createTransaction({
-            variables: {
-              data: {
-                ...data,
-                amount: Number(data.amount),
-                registerDate: new Date(data.registerDate).toISOString(),
-              },
-            },
-          });
-        }}
+        onSave={handleSubmit}
         isLoading={creating}
       />
     </div>

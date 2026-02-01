@@ -41,4 +41,13 @@ export class TransactionsListOutput {
 
   @Field(() => String)
   message!: string;
+
+  @Field(() => Number)
+  monthIncome: number;
+
+  @Field(() => Number)
+  monthExpense: number;
+
+  @Field(() => Number)
+  totalBalance: number;
 }

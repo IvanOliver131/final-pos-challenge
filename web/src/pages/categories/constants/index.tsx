@@ -1,0 +1,47 @@
+import {
+  BaggageClaim,
+  BookOpen,
+  BriefcaseBusiness,
+  CarFront,
+  Dumbbell,
+  Gift,
+  HeartPulse,
+  House,
+  Mailbox,
+  PawPrint,
+  PiggyBank,
+  ReceiptText,
+  ShoppingCart,
+  Ticket,
+  ToolCase,
+  Utensils,
+} from "lucide-react";
+
+export const ICON_OPTIONS = [
+  { name: "briefcase-business", label: "Trabalho", icon: BriefcaseBusiness },
+  { name: "car-front", label: "Carro", icon: CarFront },
+  { name: "heart-pulse", label: "Saúde", icon: HeartPulse },
+  { name: "piggy-bank", label: "Poupança", icon: PiggyBank },
+  { name: "shopping-cart", label: "Compras", icon: ShoppingCart },
+  { name: "ticket", label: "Passagem", icon: Ticket },
+  { name: "tool-case", label: "Ferramentas", icon: ToolCase },
+  { name: "utensils", label: "Comida", icon: Utensils },
+  { name: "paw-print", label: "Animais", icon: PawPrint },
+  { name: "house", label: "Casa", icon: House },
+  { name: "gift", label: "Presente", icon: Gift },
+  { name: "dumbbell", label: "Academia", icon: Dumbbell },
+  { name: "book-open", label: "Livro", icon: BookOpen },
+  { name: "baggage-claim", label: "Viagem", icon: BaggageClaim },
+  { name: "mailbox", label: "Correspondência", icon: Mailbox },
+  { name: "receipt-text", label: "Recibo", icon: ReceiptText },
+];
+
+export const COLOR_OPTIONS = [
+  { name: "green", hex: "#16A34A" },
+  { name: "blue", hex: "#2563EB" },
+  { name: "purple", hex: "#9333EA" },
+  { name: "pink", hex: "#DB2777" },
+  { name: "red", hex: "#DC2626" },
+  { name: "orange", hex: "#EA580C" },
+  { name: "yellow", hex: "#CA8A04" },
+];

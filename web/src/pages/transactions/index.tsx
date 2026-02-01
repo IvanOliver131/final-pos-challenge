@@ -116,25 +116,11 @@ export function Transactions() {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleteTitle, setDeleteTitle] = useState<string>("");
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-  const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [editingTransaction, setEditingTransaction] = useState<
-    (TransactionFormData & { id: string }) | null
-  >(null);
+  const [isTransactionModalOpen, setIsTransactionModalOpen] = useState(false);
+  const [editingTransaction, setEditingTransaction] =
+    useState<Transaction | null>(null);
 
   const dateRange = useMemo(() => getDateRange(period), [period]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setSearch(searchInput);
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, [searchInput]);
-
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setPage(1);
-  }, [search, typeFilter, categoryFilter, period]);
 
   const { data: transactionsData, refetch } = useQuery<ListTransactionsData>(
     LIST_TRANSACTIONS,
@@ -175,12 +161,12 @@ export function Transactions() {
     CREATE_TRANSACTION,
     {
       onCompleted() {
-        setIsCreateOpen(false);
+        setIsTransactionModalOpen(false);
         refetch();
         toast.success("Transação criada com sucesso!");
       },
       onError(error) {
-        toast.error(error.message || "Erro ao criar transação");
+        toast.error(error.message ?? "Erro ao criar transação");
       },
     },
   );
@@ -194,7 +180,7 @@ export function Transactions() {
         toast.success("Transação atualizada com sucesso!");
       },
       onError(error) {
-        toast.error(error.message || "Erro ao atualizar transação");
+        toast.error(error.message ?? "Erro ao atualizar transação");
       },
     },
   );
@@ -202,6 +188,59 @@ export function Transactions() {
   const transactions = transactionsData?.listTransactions?.transactions;
   const categories = categoriesData?.listCategories?.categories;
   const pagination = transactionsData?.listTransactions?.pagination;
+
+  const handleEditTransaction = (transaction: Transaction) => {
+    setEditingTransaction(transaction);
+    setIsTransactionModalOpen(true);
+  };
+
+  const handleSaveTransaction = async (data: TransactionFormData) => {
+    try {
+      if (editingTransaction) {
+        await updateTransaction({
+          variables: {
+            id: editingTransaction.id,
+            data: {
+              ...data,
+              amount: Number(data.amount),
+              registerDate: new Date(data.registerDate).toISOString(),
+            },
+          },
+        });
+      } else {
+        await createTransaction({
+          variables: {
+            data: {
+              ...data,
+              amount: Number(data.amount),
+              registerDate: new Date(data.registerDate).toISOString(),
+            },
+          },
+        });
+      }
+      setIsTransactionModalOpen(false);
+    } catch (error) {
+      console.error("Erro ao salvar transação:", error);
+    }
+  };
+
+  const handleCloseTransactionModal = () => {
+    setIsTransactionModalOpen(false);
+    setEditingTransaction(null);
+  };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSearch(searchInput);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchInput]);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setPage(1);
+  }, [search, typeFilter, categoryFilter, period]);
 
   return (
     <div className="w-full h-full p-6">
@@ -213,7 +252,7 @@ export function Transactions() {
           </p>
         </div>
         <div>
-          <Button onClick={() => setIsCreateOpen(true)}>
+          <Button onClick={() => setIsTransactionModalOpen(true)}>
             <Plus className="w-4 h-4" /> Nova transação
           </Button>
         </div>
@@ -234,9 +273,9 @@ export function Transactions() {
             <div>
               <label className="text-xs text-gray-500">Tipo</label>
               <Select
-                value={typeFilter || "ALL"}
-                onValueChange={(v) => {
-                  setTypeFilter(v === "ALL" ? null : (v as TypeEnum));
+                value={typeFilter ?? "ALL"}
+                onValueChange={(value) => {
+                  setTypeFilter(value === "ALL" ? null : (value as TypeEnum));
                 }}
               >
                 <SelectTrigger className="w-full">
@@ -253,9 +292,9 @@ export function Transactions() {
             <div>
               <label className="text-xs text-gray-500">Categoria</label>
               <Select
-                value={categoryFilter || "ALL"}
-                onValueChange={(v) => {
-                  setCategoryFilter(v === "ALL" ? null : v);
+                value={categoryFilter ?? "ALL"}
+                onValueChange={(value) => {
+                  setCategoryFilter(value === "ALL" ? null : value);
                 }}
               >
                 <SelectTrigger className="w-full">
@@ -346,8 +385,8 @@ export function Transactions() {
 
                   <TableCell className="py-4 align-top">
                     <Tag
-                      name={category?.name || "Sem categoria"}
-                      color={category?.color || "#999"}
+                      name={category?.name ?? "Sem categoria"}
+                      color={category?.color ?? "#999"}
                     />
                   </TableCell>
 
@@ -393,21 +432,7 @@ export function Transactions() {
 
                       <Button
                         title="Editar"
-                        onClick={() => {
-                          const dateStr = new Date(transaction.registerDate)
-                            .toISOString()
-                            .split("T")[0];
-
-                          setEditingTransaction({
-                            id: transaction.id,
-                            title: transaction.title,
-                            description: transaction.description ?? "",
-                            amount: transaction.amount,
-                            type: transaction.type,
-                            categoryId: transaction.categoryId,
-                            registerDate: dateStr,
-                          });
-                        }}
+                        onClick={() => handleEditTransaction(transaction)}
                         variant={"outline"}
                       >
                         <Edit className="w-4 h-4" />
@@ -431,7 +456,7 @@ export function Transactions() {
             </Button>
 
             <div className="px-3 py-1 text-sm bg-gray-50 rounded">
-              {pagination?.page || page}
+              {pagination?.page ?? page}
             </div>
 
             <Button
@@ -463,43 +488,12 @@ export function Transactions() {
       />
 
       <CreateOrEditTransactionModal
-        isOpen={isCreateOpen}
+        isOpen={isTransactionModalOpen}
         categories={categories}
-        onClose={() => setIsCreateOpen(false)}
-        onSubmit={(data: TransactionFormData) => {
-          createTransaction({
-            variables: {
-              data: {
-                ...data,
-                amount: Number(data.amount),
-                registerDate: new Date(data.registerDate).toISOString(),
-              },
-            },
-          });
-        }}
-        isLoading={creating}
-      />
-
-      <CreateOrEditTransactionModal
-        isOpen={!!editingTransaction}
-        key={editingTransaction?.id ?? "edit"}
-        categories={categories}
-        onClose={() => setEditingTransaction(null)}
-        initialData={editingTransaction || undefined}
-        onSubmit={(data: TransactionFormData) => {
-          if (!editingTransaction?.id) return;
-          updateTransaction({
-            variables: {
-              id: editingTransaction.id,
-              data: {
-                ...data,
-                amount: Number(data.amount),
-                registerDate: new Date(data.registerDate).toISOString(),
-              },
-            },
-          });
-        }}
-        isLoading={updating}
+        onClose={handleCloseTransactionModal}
+        onSave={handleSaveTransaction}
+        isLoading={creating ?? updating}
+        editingTransaction={editingTransaction}
       />
     </div>
   );

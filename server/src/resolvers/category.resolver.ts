@@ -1,9 +1,11 @@
 import {
   Arg,
   Ctx,
+  FieldResolver,
   Mutation,
   Query,
   Resolver,
+  Root,
   UseMiddleware,
 } from "type-graphql";
 import {
@@ -17,10 +19,14 @@ import {
 import { CategoryService } from "../services/category.service";
 import { IsAuth } from "../middlewares/auth.middleware";
 import { GraphqlContext } from "../graphql/context";
+import { TransactionModel } from "../models/transaction.model";
+import { CategoryModel } from "../models/category.model";
+import { TransactionService } from "../services/transaction.service";
 
-@Resolver()
+@Resolver(() => CategoryModel)
 export class CategoryResolver {
   private categoryService = new CategoryService();
+  private transactionService = new TransactionService();
 
   @Mutation(() => CategoryOutput)
   @UseMiddleware(IsAuth)
@@ -72,5 +78,21 @@ export class CategoryResolver {
       categories,
       message: "Categorias listadas com sucesso!",
     };
+  }
+
+  @FieldResolver(() => TransactionModel)
+  async amount(@Root() category: CategoryModel): Promise<number> {
+    return this.transactionService.getAmountTransactionsById(
+      category.userId,
+      category.id,
+    );
+  }
+
+  @FieldResolver(() => TransactionModel)
+  async count(@Root() category: CategoryModel): Promise<number> {
+    return this.transactionService.getCountTransactionsById(
+      category.userId,
+      category.id,
+    );
   }
 }

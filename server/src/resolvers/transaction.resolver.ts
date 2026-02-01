@@ -71,6 +71,9 @@ export class TransactionResolver {
     const totalPages = Math.ceil(result.total / result.limit);
     const hasNextPage = result.page < totalPages;
     const hasPreviousPage = result.page > 1;
+    const monthExpense = result.monthExpense;
+    const monthIncome = result.monthIncome;
+    const totalBalance = result.totalBalance;
 
     return {
       transactions: result.transactions,
@@ -82,6 +85,9 @@ export class TransactionResolver {
         hasNextPage,
         hasPreviousPage,
       },
+      monthExpense,
+      monthIncome,
+      totalBalance,
       message: "Transações listadas com sucesso!",
     };
   }

@@ -29,6 +29,9 @@ export const LIST_TRANSACTIONS = gql`
         hasNextPage
         hasPreviousPage
       }
+      monthIncome
+      monthExpense
+      totalBalance
     }
   }
 `;

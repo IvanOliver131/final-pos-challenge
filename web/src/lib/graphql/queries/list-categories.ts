@@ -12,6 +12,8 @@ export const LIST_CATEGORIES = gql`
         color
         createdAt
         updatedAt
+        amount
+        count
       }
     }
   }

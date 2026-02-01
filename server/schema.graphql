@@ -9,7 +9,9 @@ type CategoriesListOutput {
 }
 
 type CategoryModel {
+  amount: Float
   color: String
+  count: Float
   createdAt: DateTimeISO!
   description: String
   icon: String
@@ -130,7 +132,10 @@ enum TransactionType {
 
 type TransactionsListOutput {
   message: String!
+  monthExpense: Float!
+  monthIncome: Float!
   pagination: PaginationInfo!
+  totalBalance: Float!
   transactions: [TransactionModel!]!
 }
 

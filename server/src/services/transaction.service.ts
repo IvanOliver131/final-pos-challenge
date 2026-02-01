@@ -11,6 +11,9 @@ interface ListTransactionsResult {
   total: number;
   page: number;
   limit: number;
+  monthIncome: number;
+  monthExpense: number;
+  totalBalance: number;
 }
 
 export class TransactionService {
@@ -42,7 +45,7 @@ export class TransactionService {
     const skip = (page - 1) * limit;
 
     const whereClause: any = {
-      userId: userId,
+      userId,
     };
 
     if (filters.type) {
@@ -68,38 +71,104 @@ export class TransactionService {
     if (filters.search) {
       const searchTerm = filters.search.toLowerCase();
       whereClause.OR = [
-        {
-          title: {
-            contains: searchTerm,
-          },
-        },
-        {
-          description: {
-            contains: searchTerm,
-          },
-        },
+        { title: { contains: searchTerm } },
+        { description: { contains: searchTerm } },
       ];
     }
 
-    const [transactions, total] = await Promise.all([
+    const now = new Date();
+    const startOfMonth = new Date(
+      Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1, 0, 0, 0),
+    );
+
+    const startOfNextMonth = new Date(
+      Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1, 0, 0, 0),
+    );
+
+    const [
+      transactions,
+      total,
+      monthIncomeAgg,
+      monthExpenseAgg,
+      totalIncomeAgg,
+      totalExpenseAgg,
+    ] = await Promise.all([
       prismaClient.transaction.findMany({
         where: whereClause,
-        orderBy: {
-          registerDate: "desc",
-        },
-        skip: skip,
+        orderBy: { registerDate: "desc" },
+        skip,
         take: limit,
       }),
+
       prismaClient.transaction.count({
         where: whereClause,
       }),
+
+      prismaClient.transaction.aggregate({
+        where: {
+          userId,
+          type: "INCOME",
+          registerDate: {
+            gte: startOfMonth,
+            lt: startOfNextMonth,
+          },
+        },
+        _sum: {
+          amount: true,
+        },
+      }),
+
+      prismaClient.transaction.aggregate({
+        where: {
+          userId,
+          type: "EXPENSE",
+          registerDate: {
+            gte: startOfMonth,
+            lt: startOfNextMonth,
+          },
+        },
+        _sum: {
+          amount: true,
+        },
+      }),
+
+      prismaClient.transaction.aggregate({
+        where: {
+          userId,
+          type: "INCOME",
+        },
+        _sum: {
+          amount: true,
+        },
+      }),
+
+      prismaClient.transaction.aggregate({
+        where: {
+          userId,
+          type: "EXPENSE",
+        },
+        _sum: {
+          amount: true,
+        },
+      }),
     ]);
+
+    const monthIncome = monthIncomeAgg._sum.amount ?? 0;
+    const monthExpense = monthExpenseAgg._sum.amount ?? 0;
+
+    const totalIncome = totalIncomeAgg._sum.amount ?? 0;
+    const totalExpense = totalExpenseAgg._sum.amount ?? 0;
+
+    const totalBalance = totalIncome - totalExpense;
 
     return {
       transactions: transactions as TransactionModel[],
       total,
       page,
       limit,
+      monthIncome,
+      monthExpense,
+      totalBalance,
     };
   }
 
@@ -164,5 +233,39 @@ export class TransactionService {
     });
 
     return true;
+  }
+
+  async getAmountTransactionsById(
+    userId: string,
+    categoryId: string,
+  ): Promise<number> {
+    const result = await prismaClient.transaction.aggregate({
+      where: {
+        userId,
+        categoryId,
+      },
+      _sum: {
+        amount: true,
+      },
+    });
+
+    return result._sum.amount ?? 0;
+  }
+
+  async getCountTransactionsById(
+    userId: string,
+    categoryId: string,
+  ): Promise<number> {
+    const result = await prismaClient.transaction.aggregate({
+      where: {
+        userId,
+        categoryId,
+      },
+      _count: {
+        id: true,
+      },
+    });
+
+    return result._count.id ?? 0;
   }
 }

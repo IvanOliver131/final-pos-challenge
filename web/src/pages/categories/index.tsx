@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@apollo/client/react";
-import { Plus, Trash2, Edit2, Tag as TagIcon, ArrowUpDown } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Plus, Tag as TagIcon, ArrowUpDown } from "lucide-react";
+import { Card, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { LIST_CATEGORIES } from "@/lib/graphql/queries/list-categories";
 import { LIST_TRANSACTIONS } from "@/lib/graphql/queries/list-transactions";
@@ -11,7 +11,7 @@ import {
   DELETE_CATEGORY,
 } from "@/lib/graphql/mutations/category";
 import type { Category, Transaction } from "@/types";
-import { Tag } from "@/components/tag";
+
 import { IconRender } from "@/components/icon-render";
 import {
   CreateOrEditCategoryModal,
@@ -20,6 +20,7 @@ import {
 import { DeleteCategoryModal } from "@/pages/categories/delete-category-modal";
 import { toast } from "sonner";
 import { Label } from "@/components/ui/label";
+import { CategoryCard } from "./category-card";
 
 interface ListCategoriesData {
   listCategories: {
@@ -69,7 +70,7 @@ export function Categories() {
         toast.success("Categoria criada com sucesso!");
       },
       onError: (error) => {
-        toast.error(error.message || "Erro ao criar categoria");
+        toast.error(error.message ?? "Erro ao criar categoria");
       },
     },
   );
@@ -83,7 +84,7 @@ export function Categories() {
         setEditingCategory(null);
       },
       onError: (error) => {
-        toast.error(error.message || "Erro ao atualizar categoria");
+        toast.error(error.message ?? "Erro ao atualizar categoria");
       },
     },
   );
@@ -98,13 +99,13 @@ export function Categories() {
         setCategoryToDelete(null);
       },
       onError: (error) => {
-        toast.error(error.message || "Erro ao deletar categoria");
+        toast.error(error.message ?? "Erro ao deletar categoria");
       },
     },
   );
 
-  const categories = categoriesData?.listCategories?.categories || [];
-  const transactions = transactionsData?.listTransactions?.transactions || [];
+  const categories = categoriesData?.listCategories?.categories ?? [];
+  const transactions = transactionsData?.listTransactions?.transactions ?? [];
 
   const categoriesWithCount = categories.map((category) => {
     const transactionCount = transactions.filter(
@@ -254,60 +255,14 @@ export function Categories() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {categoriesWithCount.map((category) => (
-              <Card key={category.id} className="overflow-hidden">
-                <CardHeader className="p-4 pb-3">
-                  <div className="flex items-start justify-between gap-4">
-                    <div
-                      className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
-                      style={{
-                        backgroundColor: `${category.color}20`,
-                      }}
-                    >
-                      <IconRender
-                        categoryIconName={category.icon}
-                        categoryColor={category.color}
-                      />
-                    </div>
-                    <div className="flex gap-1">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="h-7 w-7 p-0 text-red"
-                        onClick={() => handleDeleteClick(category)}
-                        disabled={deleteLoading}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="h-7 w-7 p-0"
-                        onClick={() => handleEditCategory(category)}
-                        disabled={updateLoading}
-                      >
-                        <Edit2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="p-4 pt-0">
-                  <h3 className="font-semibold text-gray-900 text-sm mb-1">
-                    {category.name}
-                  </h3>
-                  <p className="text-xs text-gray-600 mb-4">
-                    {category.description}
-                  </p>
-                  <div className="flex items-center justify-between">
-                    <Tag
-                      name={category.name}
-                      color={category.color || "#999"}
-                    />
-                    <span className="text-xs text-gray-600 font-medium">
-                      {category.count} {category.count === 1 ? "item" : "items"}
-                    </span>
-                  </div>
-                </CardContent>
-              </Card>
+              <CategoryCard
+                key={category.id}
+                category={category}
+                handleDeleteClick={handleDeleteClick}
+                handleEditCategory={handleEditCategory}
+                deleteLoading={deleteLoading}
+                updateLoading={updateLoading}
+              />
             ))}
           </div>
         )}
@@ -317,13 +272,13 @@ export function Categories() {
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         onSave={handleSaveCategory}
-        isLoading={createLoading || updateLoading}
+        isLoading={createLoading ?? updateLoading}
         editingCategory={editingCategory}
       />
 
       <DeleteCategoryModal
         isOpen={deleteConfirmOpen}
-        categoryName={categoryToDelete?.name || ""}
+        categoryName={categoryToDelete?.name ?? ""}
         onConfirm={handleConfirmDelete}
         onCancel={() => {
           setDeleteConfirmOpen(false);

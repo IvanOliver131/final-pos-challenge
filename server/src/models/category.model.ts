@@ -20,6 +20,12 @@ export class CategoryModel {
   @Field(() => String)
   userId!: string;
 
+  @Field(() => Number, { nullable: true })
+  amount?: number;
+
+  @Field(() => Number, { nullable: true })
+  count?: number;
+
   @Field(() => GraphQLISODateTime)
   createdAt!: Date;
 

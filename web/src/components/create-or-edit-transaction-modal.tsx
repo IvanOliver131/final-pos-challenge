@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import type { Category } from "@/types";
+import type { Category, Transaction } from "@/types";
 import { Label } from "./ui/label";
 
 export interface TransactionFormData {
@@ -22,63 +22,71 @@ export interface TransactionFormData {
   registerDate: string;
 }
 
+export interface TransactionFormDataErrors {
+  title: string;
+  description: string;
+  amount: string;
+  categoryId: string;
+  registerDate: string;
+}
+
 interface CreateOrEditTransactionModalProps {
   isOpen: boolean;
   categories: Category[] | undefined;
   onClose: () => void;
-  onSubmit: (data: TransactionFormData) => void;
+  onSave: (data: TransactionFormData) => void;
   isLoading?: boolean;
-  initialData?: TransactionFormData & { id?: string };
+  editingTransaction?: Transaction | null;
 }
+
+const INITIAL_STATE: TransactionFormData = {
+  title: "",
+  description: "",
+  amount: 0,
+  type: "EXPENSE",
+  categoryId: "",
+  registerDate: new Date().toISOString().split("T")[0],
+};
 
 export function CreateOrEditTransactionModal({
   isOpen,
   categories,
   onClose,
-  onSubmit,
+  onSave,
+  editingTransaction = null,
   isLoading = false,
-  initialData,
 }: CreateOrEditTransactionModalProps) {
-  const isEditMode = !!initialData?.id;
+  const [formData, setFormData] = useState<TransactionFormData>(INITIAL_STATE);
 
-  const [formData, setFormData] = useState<TransactionFormData>(() => {
-    if (initialData) {
-      return {
-        title: initialData.title,
-        description: initialData.description ?? "",
-        amount: initialData.amount,
-        type: initialData.type,
-        categoryId: initialData.categoryId,
-        registerDate:
-          initialData.registerDate || new Date().toISOString().split("T")[0],
-      };
-    }
-
-    return {
-      title: "",
-      description: "",
-      amount: 0,
-      type: "EXPENSE",
-      categoryId: "",
-      registerDate: new Date().toISOString().split("T")[0],
-    };
-  });
-
-  const [errors, setErrors] = useState<Partial<TransactionFormData>>({});
+  const [errors, setErrors] = useState<Partial<TransactionFormDataErrors>>({});
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (editingTransaction && isOpen) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setFormData({
+        title: editingTransaction.title,
+        description: editingTransaction.description ?? "",
+        amount: editingTransaction.amount,
+        categoryId: editingTransaction.categoryId,
+        type: editingTransaction.type,
+        registerDate: editingTransaction.registerDate
+          ? editingTransaction.registerDate.split("T")[0]
+          : "",
+      });
+    } else if (isOpen) {
+      setFormData(INITIAL_STATE);
+    }
     setErrors({});
-  }, [initialData]);
+  }, [isOpen, editingTransaction]);
 
   const validateForm = () => {
-    const newErrors: Partial<TransactionFormData> = {};
+    const newErrors: Partial<TransactionFormDataErrors> = {};
 
     if (!formData.title.trim()) {
       newErrors.title = "Título é obrigatório";
     }
     if (formData.amount <= 0) {
-      newErrors.amount = 0;
+      newErrors.amount = "Valor é obrigatório";
     }
     if (!formData.categoryId) {
       newErrors.categoryId = "Categoria é obrigatória";
@@ -94,7 +102,7 @@ export function CreateOrEditTransactionModal({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validateForm()) {
-      onSubmit(formData);
+      onSave(formData);
       setFormData({
         title: "",
         description: "",
@@ -115,10 +123,10 @@ export function CreateOrEditTransactionModal({
         <CardHeader className="flex flex-row justify-between">
           <div>
             <h2 className="text-xl font-semibold">
-              {isEditMode ? "Editar transação" : "Nova transação"}
+              {editingTransaction ? "Editar transação" : "Nova transação"}
             </h2>
             <p className="text-sm text-gray-500">
-              {isEditMode
+              {editingTransaction
                 ? "Atualize os dados da transação"
                 : "Registre sua despesa ou receita"}
             </p>
@@ -139,7 +147,7 @@ export function CreateOrEditTransactionModal({
                 onClick={() => setFormData({ ...formData, type: "EXPENSE" })}
                 className={`flex items-center justify-center gap-2 p-2 rounded-md ${formData.type === "EXPENSE" ? "border border-red" : ""}`}
               >
-                <CircleArrowUp
+                <CircleArrowDown
                   className={`${formData.type === "EXPENSE" ? "text-red" : "text-gray-400"}`}
                 />
                 <Label className="hover:cursor-pointer">Despesa</Label>
@@ -150,7 +158,7 @@ export function CreateOrEditTransactionModal({
                 onClick={() => setFormData({ ...formData, type: "INCOME" })}
                 className={`flex items-center justify-center gap-2 p-2 rounded-md ${formData.type === "INCOME" ? "border border-green" : ""}`}
               >
-                <CircleArrowDown
+                <CircleArrowUp
                   className={`${formData.type === "INCOME" ? "text-green" : "text-gray-400"}`}
                 />
                 <Label className="hover:cursor-pointer">Receita</Label>
@@ -201,11 +209,11 @@ export function CreateOrEditTransactionModal({
                     step="0.01"
                     min="0"
                     placeholder="0,00"
-                    value={formData.amount || ""}
+                    value={formData.amount ?? ""}
                     onChange={(e) =>
                       setFormData({
                         ...formData,
-                        amount: parseFloat(e.target.value) || 0,
+                        amount: parseFloat(e.target.value) ?? 0,
                       })
                     }
                     className={errors.amount ? "border-red-500" : ""}
@@ -222,10 +230,10 @@ export function CreateOrEditTransactionModal({
                 Categoria
               </label>
               <Select
-                value={formData.categoryId || ""}
-                onValueChange={(value) =>
-                  setFormData({ ...formData, categoryId: value })
-                }
+                defaultValue={editingTransaction?.categoryId ?? ""}
+                onValueChange={(value) => {
+                  setFormData({ ...formData, categoryId: value });
+                }}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Selecione uma categoria" />
@@ -262,10 +270,10 @@ export function CreateOrEditTransactionModal({
 
             <Button type="submit" disabled={isLoading} className="w-full">
               {isLoading
-                ? isEditMode
+                ? editingTransaction
                   ? "Atualizando..."
                   : "Salvando..."
-                : isEditMode
+                : editingTransaction
                   ? "Atualizar"
                   : "Salvar"}
             </Button>

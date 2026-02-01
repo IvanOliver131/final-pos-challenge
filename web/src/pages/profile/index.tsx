@@ -15,7 +15,7 @@ import {
 export function Profile() {
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
-  const [name] = useState(user?.name || "");
+  const [name] = useState(user?.name ?? "");
 
   const handleSave = () => {
     console.log("Salvando alterações:", { name });

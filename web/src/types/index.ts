@@ -69,6 +69,8 @@ export interface Category {
   icon: string;
   color?: string;
   userId: string;
+  count: number;
+  amount: number;
   createdAt: string;
   updatedAt: string;
 }
