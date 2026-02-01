@@ -445,26 +445,52 @@ export function Transactions() {
           </TableBody>
         </Table>
 
-        <div className="flex items-center justify-end p-2">
-          <div className="flex items-center gap-2">
+        <div className="flex items-center justify-between p-3 border-t">
+          <div className="text-sm text-gray-500">
+            {pagination
+              ? `${(pagination.page - 1) * pagination.limit + 1} a ${Math.min(
+                  pagination.page * pagination.limit,
+                  pagination.total,
+                )} | ${pagination.total} resultados`
+              : null}
+          </div>
+
+          <div className="flex items-center gap-1">
             <Button
+              size="icon"
+              variant="outline"
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={!pagination?.hasPreviousPage}
-              variant="outline"
             >
               <ChevronLeft className="w-4 h-4" />
             </Button>
 
-            <div className="px-3 py-1 text-sm bg-gray-50 rounded">
-              {pagination?.page ?? page}
-            </div>
+            {Array.from({ length: pagination?.totalPages ?? 1 }).map(
+              (_, index) => {
+                const pageNumber = index + 1;
+                const isActive = pageNumber === pagination?.page;
+
+                return (
+                  <Button
+                    key={pageNumber}
+                    size="icon"
+                    variant={isActive ? "default" : "outline"}
+                    onClick={() => setPage(pageNumber)}
+                    className="w-8 h-8"
+                  >
+                    {pageNumber}
+                  </Button>
+                );
+              },
+            )}
 
             <Button
+              size="icon"
+              variant="outline"
               onClick={() =>
                 setPage((p) => (pagination?.hasNextPage ? p + 1 : p))
               }
               disabled={!pagination?.hasNextPage}
-              variant="outline"
             >
               <ChevronRight className="w-4 h-4" />
             </Button>

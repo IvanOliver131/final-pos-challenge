@@ -227,8 +227,8 @@ export function Categories() {
         <Card>
           <div className="flex flex-row items-center p-5 gap-2">
             <IconRender
-              categoryIconName={mostUsedCategory.icon}
-              categoryColor={mostUsedCategory.color}
+              categoryIconName={mostUsedCategory?.icon}
+              categoryColor={mostUsedCategory?.color}
               size={6}
             />
             <CardTitle className="flex flex-col">

@@ -4,76 +4,51 @@
 
 @layer base {
   :root {
-    /* =========================
-       Base
-    ========================= */
-    --background: 0 0% 100%; /* #FFFFFF */
-    --foreground: 222 47% 11%; /* #111827 */
+    --background: 0 0% 100%;
+    --foreground: 222 47% 11%;
 
-    /* =========================
-       Containers
-    ========================= */
     --card: 0 0% 100%;
     --card-foreground: 222 47% 11%;
 
     --popover: 0 0% 100%;
     --popover-foreground: 222 47% 11%;
 
-    /* =========================
-       Brand
-    ========================= */
-    --primary: 145 61% 27%; /* #1F6F43 */
+    --primary: 145 61% 27%;
     --primary-foreground: 0 0% 100%;
-    --primary-dark: 145 61% 18%; /* #124B2B */
+    --primary-dark: 145 61% 18%;
 
-    /* =========================
-       Grayscale / Neutrals
-    ========================= */
-    --secondary: 210 40% 96%; /* #F8F9FA */
+    --secondary: 210 40% 96%;
     --secondary-foreground: 222 47% 11%;
 
-    --muted: 240 7% 90%; /* #E5E7EB */
-    --muted-foreground: 220 13% 63%; /* #9CA3AF */
+    --muted: 240 7% 90%;
+    --muted-foreground: 220 13% 63%;
 
     --accent: 240 7% 90%;
     --accent-foreground: 222 47% 11%;
 
-    /* =========================
-       Feedback
-    ========================= */
-    --destructive: 0 91% 71%; /* #EF4444 */
+    --destructive: 0 91% 71%;
     --destructive-foreground: 0 0% 100%;
 
-    --success: 158 70% 38%; /* #19AD70 */
+    --success: 158 70% 38%;
     --success-foreground: 0 0% 100%;
 
-    /* =========================
-       Borders & Inputs
-    ========================= */
-    --border: 220 13% 82%; /* #D1D5DB */
+    --border: 220 13% 82%;
     --input: 240 7% 90%;
-    --ring: 145 61% 27%; /* primary */
+    --ring: 145 61% 27%;
 
-    /* =========================
-       Radius
-    ========================= */
     --radius: 0.5rem;
 
-    /* =========================
-       Semantic Colors
-    ========================= */
-    --blue: 217 91% 56%; /* #2563EB */
-    --purple: 271 81% 56%; /* #9333EA */
-    --pink: 330 81% 60%; /* #DB2777 */
-    --red: 0 72% 51%; /* #DC2626 */
-    --orange: 24 95% 53%; /* #EA580C */
-    --yellow: 45 93% 47%; /* #CA8A04 */
-    --green: 145 61% 36%; /* #16A34A */
+    --blue: 217 91% 56%;
+    --purple: 271 81% 56%;
+    --pink: 330 81% 60%;
+    --red: 0 72% 51%;
+    --orange: 24 95% 53%;
+    --yellow: 45 93% 47%;
+    --green: 145 61% 36%;
   }
 
-  /* 🌙 Dark Mode */
   .dark {
-    --background: 222 47% 11%; /* #111827 */
+    --background: 222 47% 11%;
     --foreground: 0 0% 100%;
 
     --card: 222 47% 11%;
@@ -85,11 +60,11 @@
     --primary: 145 61% 36%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 215 28% 17%; /* #374151 */
+    --secondary: 215 28% 17%;
     --secondary-foreground: 0 0% 100%;
 
     --muted: 215 28% 17%;
-    --muted-foreground: 215 20% 65%; /* #9CA3AF */
+    --muted-foreground: 215 20% 65%;
 
     --accent: 215 28% 17%;
     --accent-foreground: 0 0% 100%;

@@ -1,8 +1,9 @@
 import { IconRender } from "@/components/icon-render";
+import { Tag } from "@/components/tag";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Category } from "@/types";
-import { Trash2, Edit2, Tag } from "lucide-react";
+import { Trash2, Edit2 } from "lucide-react";
 
 interface CategoryCardProps {
   category: Category;
