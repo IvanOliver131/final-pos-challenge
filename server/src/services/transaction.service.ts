@@ -49,6 +49,10 @@ export class TransactionService {
       whereClause.type = filters.type;
     }
 
+    if (filters.categoryId) {
+      whereClause.categoryId = filters.categoryId;
+    }
+
     if (filters.startDate || filters.endDate) {
       whereClause.registerDate = {};
       if (filters.startDate) {
@@ -62,17 +66,16 @@ export class TransactionService {
     }
 
     if (filters.search) {
+      const searchTerm = filters.search.toLowerCase();
       whereClause.OR = [
         {
           title: {
-            contains: filters.search,
-            mode: "insensitive",
+            contains: searchTerm,
           },
         },
         {
           description: {
-            contains: filters.search,
-            mode: "insensitive",
+            contains: searchTerm,
           },
         },
       ];

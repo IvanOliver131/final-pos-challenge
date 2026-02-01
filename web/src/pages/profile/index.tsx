@@ -88,7 +88,12 @@ export function Profile() {
             </Label>
           </div>
 
-          <Button type="submit" className="w-full">
+          <Button
+            type="submit"
+            className="w-full"
+            disabled
+            title="Funcionalidade não desenvolvida!"
+          >
             Salvar alterações
           </Button>
 

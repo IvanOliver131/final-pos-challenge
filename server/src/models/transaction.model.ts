@@ -5,6 +5,7 @@ import {
   ObjectType,
   registerEnumType,
 } from "type-graphql";
+import { CategoryModel } from "./category.model";
 
 export enum TransactionType {
   INCOME = "INCOME",
@@ -41,6 +42,9 @@ export class TransactionModel {
 
   @Field(() => String)
   categoryId!: string;
+
+  @Field(() => CategoryModel, { nullable: true })
+  category?: CategoryModel;
 
   @Field(() => GraphQLISODateTime)
   createdAt!: Date;

@@ -100,16 +100,6 @@ export function Login() {
               </InputGroup>
             </div>
 
-            {/* <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <Checkbox id="remember" className="mr-2" />
-                <Label htmlFor="remember" className="text-sm font-normal">
-                  Lembrar-me
-                </Label>
-              </div>
-              <Label className="text-destructive">Recuperar senha</Label>
-            </div> */}
-
             <Button type="submit" disabled={loading} className="bg-primary">
               Entrar
             </Button>

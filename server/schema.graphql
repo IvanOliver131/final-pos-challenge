@@ -11,6 +11,8 @@ type CategoriesListOutput {
 type CategoryModel {
   color: String
   createdAt: DateTimeISO!
+  description: String
+  icon: String
   id: ID!
   name: String!
   updatedAt: DateTimeISO!
@@ -24,6 +26,8 @@ type CategoryOutput {
 
 input CreateCategoryInput {
   color: String
+  description: String
+  icon: String
   name: String!
 }
 
@@ -42,6 +46,7 @@ A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `dat
 scalar DateTimeISO
 
 input ListTransactionsFiltersInput {
+  categoryId: String
   endDate: DateTimeISO
   limit: Float = 10
   page: Float = 1
@@ -100,6 +105,7 @@ type RegisterOutput {
 
 type TransactionModel {
   amount: Float!
+  category: CategoryModel
   categoryId: String!
   createdAt: DateTimeISO!
   description: String
@@ -130,6 +136,8 @@ type TransactionsListOutput {
 
 input UpdateCategoryInput {
   color: String
+  description: String
+  icon: String
   name: String
 }
 

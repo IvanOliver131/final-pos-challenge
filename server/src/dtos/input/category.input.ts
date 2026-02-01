@@ -6,6 +6,12 @@ export class CreateCategoryInput {
   name!: string;
 
   @Field(() => String, { nullable: true })
+  description?: string;
+
+  @Field(() => String, { nullable: true })
+  icon?: string;
+
+  @Field(() => String, { nullable: true })
   color?: string;
 }
 
@@ -13,6 +19,12 @@ export class CreateCategoryInput {
 export class UpdateCategoryInput {
   @Field(() => String, { nullable: true })
   name?: string;
+
+  @Field(() => String, { nullable: true })
+  description?: string;
+
+  @Field(() => String, { nullable: true })
+  icon?: string;
 
   @Field(() => String, { nullable: true })
   color?: string;

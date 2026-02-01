@@ -56,6 +56,7 @@ export interface Transaction {
   description?: string;
   registerDate: string;
   categoryId: string;
+  category: Category;
   userId: string;
   createdAt: string;
   updatedAt: string;
@@ -64,6 +65,8 @@ export interface Transaction {
 export interface Category {
   id: string;
   name: string;
+  description: string;
+  icon: string;
   color?: string;
   userId: string;
   createdAt: string;

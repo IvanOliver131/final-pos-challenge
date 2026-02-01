@@ -12,6 +12,12 @@ export const LIST_TRANSACTIONS = gql`
         description
         registerDate
         categoryId
+        category {
+          id
+          name
+          icon
+          color
+        }
         createdAt
         updatedAt
       }

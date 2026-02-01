@@ -50,9 +50,11 @@ model Transaction {
 }
 
 model Category {
-  id    String  @id @default(uuid())
-  name  String
-  color String?
+  id          String  @id @default(uuid())
+  name        String
+  description String?
+  icon        String?
+  color       String?
 
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)

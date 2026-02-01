@@ -22,6 +22,8 @@ export class CategoryService {
     const category = await prismaClient.category.create({
       data: {
         name: data.name,
+        description: data.description,
+        icon: data.icon,
         color: data.color,
         userId,
       },
@@ -70,6 +72,8 @@ export class CategoryService {
       },
       data: {
         name: data.name,
+        description: data.description,
+        icon: data.icon,
         color: data.color,
       },
     });

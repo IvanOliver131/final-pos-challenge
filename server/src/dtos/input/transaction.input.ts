@@ -51,6 +51,9 @@ export class ListTransactionsFiltersInput {
   @Field(() => TransactionType, { nullable: true })
   type?: TransactionType;
 
+  @Field(() => String, { nullable: true })
+  categoryId?: string;
+
   @Field(() => Date, { nullable: true })
   startDate?: Date;
 

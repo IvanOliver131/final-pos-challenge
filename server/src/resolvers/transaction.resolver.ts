@@ -1,9 +1,11 @@
 import {
   Arg,
   Ctx,
+  FieldResolver,
   Mutation,
   Query,
   Resolver,
+  Root,
   UseMiddleware,
 } from "type-graphql";
 import { TransactionService } from "../services/transaction.service";
@@ -18,10 +20,14 @@ import {
 } from "../dtos/output/transaction.output";
 import { IsAuth } from "../middlewares/auth.middleware";
 import { GraphqlContext } from "../graphql/context";
+import { CategoryModel } from "../models/category.model";
+import { TransactionModel } from "../models/transaction.model";
+import { CategoryService } from "../services/category.service";
 
-@Resolver()
+@Resolver(() => TransactionModel)
 export class TransactionResolver {
   private transactionService = new TransactionService();
+  private categoryService = new CategoryService();
 
   @Mutation(() => TransactionOutput)
   @UseMiddleware(IsAuth)
@@ -50,6 +56,7 @@ export class TransactionResolver {
     const defaultFilters: ListTransactionsFiltersInput = {
       search: filters?.search,
       type: filters?.type,
+      categoryId: filters?.categoryId,
       startDate: filters?.startDate,
       endDate: filters?.endDate,
       page: filters?.page ?? 1,
@@ -107,5 +114,15 @@ export class TransactionResolver {
     await this.transactionService.deleteTransaction(context.user!, id);
 
     return "Transação deletada com sucesso!";
+  }
+
+  @FieldResolver(() => CategoryModel)
+  async category(
+    @Root() transaction: TransactionModel,
+  ): Promise<CategoryModel> {
+    return this.categoryService.getCategoryById(
+      transaction.userId,
+      transaction.categoryId,
+    );
   }
 }
