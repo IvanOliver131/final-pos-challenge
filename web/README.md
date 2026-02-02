@@ -52,6 +52,7 @@ Após iniciar, a aplicação estará disponível em http://localhost:5173 (ou na
 
 ## 🏗️ Estrutura de Pastas
 
+```
 src/
 ├── assets/ # Arquivos de mídia e imagens
 ├── components/ # Componentes reutilizáveis da interface
@@ -61,6 +62,7 @@ src/
 ├── services/ # Configurações de API e chamadas HTTP
 ├── styles/ # Estilos globais e configurações do Tailwind
 └── utils/ # Funções auxiliares e formatadores
+```
 
 ## 🛠️ Scripts Disponíveis
 
