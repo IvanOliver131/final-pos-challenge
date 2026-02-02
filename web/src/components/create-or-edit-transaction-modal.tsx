@@ -189,12 +189,10 @@ export function CreateOrEditTransactionModal({
                   onChange={(e) =>
                     setFormData({ ...formData, registerDate: e.target.value })
                   }
-                  className={errors.registerDate ? "border-red-500" : ""}
+                  className={errors.registerDate ? "border-red" : ""}
                 />
                 {errors.registerDate && (
-                  <p className="text-xs text-red-500 mt-1">
-                    {errors.registerDate}
-                  </p>
+                  <p className="text-xs text-red mt-1">{errors.registerDate}</p>
                 )}
               </div>
 
@@ -216,11 +214,11 @@ export function CreateOrEditTransactionModal({
                         amount: parseFloat(e.target.value) ?? 0,
                       })
                     }
-                    className={errors.amount ? "border-red-500" : ""}
+                    className={errors.amount ? "border-red" : ""}
                   />
                 </div>
                 {errors.amount && (
-                  <p className="text-xs text-red-500 mt-1">{errors.amount}</p>
+                  <p className="text-xs text-red mt-1">{errors.amount}</p>
                 )}
               </div>
             </div>
@@ -247,7 +245,7 @@ export function CreateOrEditTransactionModal({
                 </SelectContent>
               </Select>
               {errors.categoryId && (
-                <p className="text-xs text-red-500 mt-1">{errors.categoryId}</p>
+                <p className="text-xs text-red mt-1">{errors.categoryId}</p>
               )}
             </div>
 
@@ -261,10 +259,10 @@ export function CreateOrEditTransactionModal({
                 onChange={(e) =>
                   setFormData({ ...formData, title: e.target.value })
                 }
-                className={errors.title ? "border-red-500" : ""}
+                className={errors.title ? "border-red" : ""}
               />
               {errors.title && (
-                <p className="text-xs text-red-500 mt-1">{errors.title}</p>
+                <p className="text-xs text-red mt-1">{errors.title}</p>
               )}
             </div>
 

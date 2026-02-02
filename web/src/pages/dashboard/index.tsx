@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery, useMutation } from "@apollo/client/react";
 import {
   Wallet,
@@ -53,7 +53,7 @@ export function Dashboard() {
   const {
     data: transactionsData,
     loading: transactionsLoading,
-    refetch,
+    refetch: refetchTransactions,
   } = useQuery<ListTransactionsData>(LIST_TRANSACTIONS, {
     variables: {
       filters: {
@@ -62,15 +62,19 @@ export function Dashboard() {
     },
   });
 
-  const { data: categoriesData, loading: categoriesLoading } =
-    useQuery<ListCategoriesData>(LIST_CATEGORIES);
+  const {
+    data: categoriesData,
+    loading: categoriesLoading,
+    refetch: refetchCategories,
+  } = useQuery<ListCategoriesData>(LIST_CATEGORIES);
 
   const [createTransaction, { loading: creating }] = useMutation(
     CREATE_TRANSACTION,
     {
       onCompleted() {
         setIsCreateOpen(false);
-        refetch();
+        refetchTransactions();
+        refetchCategories();
         toast.success("Transação criada com sucesso!");
       },
       onError(error) {
@@ -96,6 +100,11 @@ export function Dashboard() {
       },
     });
   };
+
+  useEffect(() => {
+    refetchCategories();
+    refetchTransactions();
+  }, [refetchCategories, refetchTransactions]);
 
   return (
     <div className="w-full h-full flex flex-col gap-6 p-6">
@@ -136,7 +145,7 @@ export function Dashboard() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-600">
+            <div className="text-2xl font-bold text-red">
               {formatCurrency(montExpense)}
             </div>
           </CardContent>
@@ -164,9 +173,11 @@ export function Dashboard() {
             <CardContent className="p-0 max-h-96 overflow-auto">
               <div>
                 {transactionsLoading ? (
-                  <p className="text-gray-500">Carregando transações...</p>
+                  <p className="text-gray-500 p-4">Carregando transações...</p>
                 ) : transactions.length === 0 ? (
-                  <p className="text-gray-500">Nenhuma transação encontrada</p>
+                  <p className="text-gray-500 p-4">
+                    Nenhuma transação encontrada
+                  </p>
                 ) : (
                   transactions.map((transaction) => (
                     <TransactionCard

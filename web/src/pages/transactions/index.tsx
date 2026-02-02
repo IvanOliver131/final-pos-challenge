@@ -333,13 +333,22 @@ export function Transactions() {
       <Card className="mt-2">
         <Table>
           <TableHeader>
-            <TableRow className="text-xs">
-              <TableHead>DESCRIÇÃO</TableHead>
-              <TableHead>DATA</TableHead>
-              <TableHead>CATEGORIA</TableHead>
-              <TableHead>TIPO</TableHead>
-              <TableHead>VALOR</TableHead>
-              <TableHead>AÇÕES</TableHead>
+            <TableRow className="text-xs text-gray-500">
+              <TableHead className="px-4 text-left">DESCRIÇÃO</TableHead>
+
+              <TableHead className="text-left whitespace-nowrap">
+                DATA
+              </TableHead>
+
+              <TableHead className="text-left">CATEGORIA</TableHead>
+
+              <TableHead className="text-center">TIPO</TableHead>
+
+              <TableHead className="text-center whitespace-nowrap">
+                VALOR
+              </TableHead>
+
+              <TableHead className="text-center">AÇÕES</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -353,20 +362,19 @@ export function Transactions() {
                   key={transaction.id}
                   className="border-b border-gray-50"
                 >
-                  <TableCell className="py-4 px-4 align-top">
-                    <div className="flex items-center gap-3">
+                  <TableCell className="py-4 px-4 align-middle">
+                    <div className="flex items-center gap-3 min-h-[44px]">
                       <div
-                        className="w-10 h-10 rounded-lg flex items-center justify-center bg-gray-50"
-                        style={{
-                          backgroundColor: `${category?.color}20`,
-                        }}
+                        className="w-10 h-10 rounded-lg flex items-center justify-center"
+                        style={{ backgroundColor: `${category?.color}20` }}
                       >
                         <IconRender
                           categoryIconName={category?.icon}
                           categoryColor={category?.color}
                         />
                       </div>
-                      <div>
+
+                      <div className="leading-tight">
                         <div className="font-medium text-gray-800">
                           {transaction.title}
                         </div>
@@ -379,28 +387,28 @@ export function Transactions() {
                     </div>
                   </TableCell>
 
-                  <TableCell className="py-4 align-top text-gray-600">
+                  <TableCell className="py-4 align-middle text-gray-600 whitespace-nowrap">
                     {formatDate(transaction.registerDate)}
                   </TableCell>
 
-                  <TableCell className="py-4 align-top">
-                    <Tag
-                      name={category?.name ?? "Sem categoria"}
-                      color={category?.color ?? "#999"}
-                    />
+                  <TableCell className="py-4">
+                    <div className="flex items-center min-h-[44px]">
+                      <Tag
+                        name={category?.name ?? "Sem categoria"}
+                        color={category?.color ?? "#999"}
+                      />
+                    </div>
                   </TableCell>
 
-                  <TableCell className="py-4 align-top">
-                    <div
-                      className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium ${transaction.type === "INCOME" ? "text-green-600" : "text-red-600"}`}
-                    >
+                  <TableCell className="py-4 align-middle">
+                    <div className="flex items-center justify-center min-h-[44px]">
                       {transaction.type === "INCOME" ? (
-                        <div className="text-green text-base flex items-center gap-2">
+                        <div className="flex items-center gap-2 text-green">
                           <CircleArrowUp className="w-4 h-4" />
                           <Label>Entrada</Label>
                         </div>
                       ) : (
-                        <div className="text-red text-base flex items-center gap-2">
+                        <div className="flex items-center gap-2 text-red">
                           <CircleArrowDown className="w-4 h-4" />
                           <Label>Saída</Label>
                         </div>
@@ -409,14 +417,16 @@ export function Transactions() {
                   </TableCell>
 
                   <TableCell
-                    className={`py-4 align-top font-semibold ${transaction.type === "INCOME" ? "text-green-600" : "text-red-600"}`}
+                    className={`py-4 text-center font-semibold ${
+                      transaction.type === "INCOME" ? "text-green" : "text-red"
+                    }`}
                   >
                     {transaction.type === "INCOME" ? "+" : "-"}{" "}
                     {formatCurrency(transaction.amount)}
                   </TableCell>
 
-                  <TableCell className="py-4 align-top">
-                    <div className="flex items-center gap-2">
+                  <TableCell className="py-4 align-middle">
+                    <div className="flex items-center justify-center gap-2 min-h-[44px]">
                       <Button
                         title="Deletar"
                         onClick={() => {
@@ -424,7 +434,7 @@ export function Transactions() {
                           setDeleteTitle(transaction.title);
                           setIsDeleteOpen(true);
                         }}
-                        variant={"outline"}
+                        variant="outline"
                         className="text-red"
                       >
                         <Trash className="w-4 h-4" />
@@ -433,7 +443,7 @@ export function Transactions() {
                       <Button
                         title="Editar"
                         onClick={() => handleEditTransaction(transaction)}
-                        variant={"outline"}
+                        variant="outline"
                       >
                         <Edit className="w-4 h-4" />
                       </Button>

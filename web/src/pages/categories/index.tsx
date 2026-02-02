@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery, useMutation } from "@apollo/client/react";
 import { Plus, Tag as TagIcon, ArrowUpDown } from "lucide-react";
 import { Card, CardTitle } from "@/components/ui/card";
@@ -48,25 +48,23 @@ export function Categories() {
   const {
     data: categoriesData,
     loading: categoriesLoading,
-    refetch,
+    refetch: refetchCategories,
   } = useQuery<ListCategoriesData>(LIST_CATEGORIES);
 
-  const { data: transactionsData } = useQuery<ListTransactionsData>(
-    LIST_TRANSACTIONS,
-    {
+  const { data: transactionsData, refetch: refetchTransactions } =
+    useQuery<ListTransactionsData>(LIST_TRANSACTIONS, {
       variables: {
         filters: {
           limit: 1000,
         },
       },
-    },
-  );
+    });
 
   const [createCategory, { loading: createLoading }] = useMutation(
     CREATE_CATEGORY,
     {
       onCompleted: () => {
-        refetch();
+        refetchCategories();
         toast.success("Categoria criada com sucesso!");
       },
       onError: (error) => {
@@ -79,7 +77,7 @@ export function Categories() {
     UPDATE_CATEGORY,
     {
       onCompleted: () => {
-        refetch();
+        refetchCategories();
         toast.success("Categoria atualizada com sucesso!");
         setEditingCategory(null);
       },
@@ -93,7 +91,7 @@ export function Categories() {
     DELETE_CATEGORY,
     {
       onCompleted: () => {
-        refetch();
+        refetchCategories();
         toast.success("Categoria deletada com sucesso!");
         setDeleteConfirmOpen(false);
         setCategoryToDelete(null);
@@ -183,6 +181,10 @@ export function Categories() {
     setIsModalOpen(false);
     setEditingCategory(null);
   };
+
+  useEffect(() => {
+    refetchTransactions();
+  }, [refetchTransactions]);
 
   return (
     <div className="w-full h-full flex flex-col gap-6 p-6">

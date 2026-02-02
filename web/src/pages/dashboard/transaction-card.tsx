@@ -36,16 +36,18 @@ export function TransactionCard({ transaction }: TransactionCardProps) {
         </div>
       </div>
 
-      <div className="flex items-center gap-10">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-10">
         <Tag
           color={transaction.category.color ?? ""}
           name={transaction.category.name}
         />
-        <div className="flex items-center gap-1">
+
+        <div className="flex items-center gap-1 whitespace-nowrap">
           <p className="text-sm font-semibold">
             {transaction.type === "INCOME" ? "+" : "-"}
-            {formatCurrency(transaction.amount)}{" "}
+            {formatCurrency(transaction.amount)}
           </p>
+
           {transaction.type === "INCOME" ? (
             <CircleArrowUp className="w-4 h-4 text-primary" />
           ) : (

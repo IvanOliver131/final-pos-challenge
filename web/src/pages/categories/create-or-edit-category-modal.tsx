@@ -28,6 +28,8 @@ export interface CategoryFormData {
   color: string;
 }
 
+type FormErrors = Partial<Record<keyof CategoryFormData, string>>;
+
 const INITAL_STATE: CategoryFormData = {
   name: "",
   description: "",
@@ -43,6 +45,7 @@ export function CreateOrEditCategoryModal({
   editingCategory = null,
 }: CategoryModalProps) {
   const [formData, setFormData] = useState<CategoryFormData>(INITAL_STATE);
+  const [errors, setErrors] = useState<FormErrors>({});
 
   useEffect(() => {
     if (editingCategory && isOpen) {
@@ -56,28 +59,52 @@ export function CreateOrEditCategoryModal({
     } else if (isOpen) {
       setFormData(INITAL_STATE);
     }
+
+    setErrors({});
   }, [isOpen, editingCategory]);
+
+  const validateForm = (): boolean => {
+    const newErrors: FormErrors = {};
+
+    if (!formData.name.trim()) {
+      newErrors.name = "O título é obrigatório";
+    } else if (formData.name.trim().length < 2) {
+      newErrors.name = "O título deve ter pelo menos 2 caracteres";
+    }
+
+    if (!formData.icon) {
+      newErrors.icon = "Selecione um ícone";
+    }
+
+    if (!formData.color) {
+      newErrors.color = "Selecione uma cor";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
 
-    if (!formData.name.trim()) return;
+    if (!validateForm()) return;
 
     onSave(formData);
   };
 
   const handleClose = () => {
     setFormData(INITAL_STATE);
+    setErrors({});
     onClose();
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
-      <Card className="w-full max-w-md mx-4">
-        <form onSubmit={handleSubmit}>
-          <CardHeader className="flex flex-row justify-between">
+    <div className="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center">
+      <Card className="w-full sm:max-w-md h-[100dvh] sm:h-auto max-h-[100dvh] sm:max-h-[90dvh] rounded-t-2xl sm:rounded-2xl overflow-hidden">
+        <form onSubmit={handleSubmit} className="flex flex-col h-full">
+          <CardHeader className="flex flex-row justify-between shrink-0">
             <div>
               <h2 className="text-lg font-semibold text-gray-900">
                 {editingCategory ? "Editar categoria" : "Nova categoria"}
@@ -86,6 +113,7 @@ export function CreateOrEditCategoryModal({
                 Organize suas transações com categorias
               </p>
             </div>
+
             <button
               type="button"
               onClick={handleClose}
@@ -95,17 +123,22 @@ export function CreateOrEditCategoryModal({
             </button>
           </CardHeader>
 
-          <CardContent className="space-y-6">
-            <div className="space-y-2">
+          <CardContent className="space-y-6 overflow-y-auto flex-1">
+            <div className="space-y-1">
               <Label htmlFor="title">Título</Label>
               <Input
                 id="title"
                 placeholder="Ex. Alimentação"
                 value={formData.name}
-                onChange={(e) =>
-                  setFormData({ ...formData, name: e.target.value })
-                }
+                onChange={(e) => {
+                  setFormData({ ...formData, name: e.target.value });
+                  setErrors((prev) => ({ ...prev, name: undefined }));
+                }}
+                className={errors.name ? "border-red" : ""}
               />
+              {errors.name && (
+                <span className="text-xs text-red">{errors.name}</span>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -122,18 +155,9 @@ export function CreateOrEditCategoryModal({
               <span className="text-xs text-gray-500">Opcional</span>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-2">
               <Label>Ícone</Label>
-              <div
-                className=" 
-                  grid
-                  grid-cols-2
-                  sm:grid-cols-4
-                  md:grid-cols-6
-                  lg:grid-cols-8
-                  gap-2
-                "
-              >
+              <div className="grid grid-cols-4 sm:grid-cols-8 gap-2">
                 {ICON_OPTIONS.map((option) => {
                   const IconComponent = option.icon;
                   const isSelected = formData.icon === option.name;
@@ -142,13 +166,14 @@ export function CreateOrEditCategoryModal({
                     <button
                       key={option.name}
                       type="button"
-                      onClick={() =>
-                        setFormData({ ...formData, icon: option.name })
-                      }
+                      onClick={() => {
+                        setFormData({ ...formData, icon: option.name });
+                        setErrors((prev) => ({ ...prev, icon: undefined }));
+                      }}
                       className={`p-2 rounded-lg border-2 flex items-center justify-center ${
                         isSelected
                           ? "border-primary bg-blue-50"
-                          : "border-gray-200 hover:border-gray-300"
+                          : "border-gray-200"
                       }`}
                     >
                       <IconComponent className="w-5 h-5 text-gray-700" />
@@ -156,19 +181,23 @@ export function CreateOrEditCategoryModal({
                   );
                 })}
               </div>
+              {errors.icon && (
+                <span className="text-xs text-red">{errors.icon}</span>
+              )}
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-2">
               <Label>Cor</Label>
-              <div className="flex justify-between gap-2">
+              <div className="flex flex-wrap gap-2 sm:justify-around">
                 {COLOR_OPTIONS.map((color) => (
                   <button
                     key={color.hex}
                     type="button"
-                    onClick={() =>
-                      setFormData({ ...formData, color: color.hex })
-                    }
-                    className={`w-10 h-8 rounded-lg border ${
+                    onClick={() => {
+                      setFormData({ ...formData, color: color.hex });
+                      setErrors((prev) => ({ ...prev, color: undefined }));
+                    }}
+                    className={`w-12 h-8 rounded-lg border ${
                       formData.color === color.hex
                         ? "border-primary border-2"
                         : "border-gray-200"
@@ -177,15 +206,14 @@ export function CreateOrEditCategoryModal({
                   />
                 ))}
               </div>
+              {errors.color && (
+                <span className="text-xs text-red">{errors.color}</span>
+              )}
             </div>
           </CardContent>
 
-          <CardFooter>
-            <Button
-              type="submit"
-              disabled={isLoading ?? !formData.name.trim()}
-              className="w-full"
-            >
+          <CardFooter className="shrink-0">
+            <Button type="submit" disabled={isLoading} className="w-full">
               {isLoading
                 ? "Salvando..."
                 : editingCategory

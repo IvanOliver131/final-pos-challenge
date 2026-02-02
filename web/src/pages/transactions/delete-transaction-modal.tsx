@@ -25,7 +25,7 @@ export function DeleteTransactionModal({
         <div className="flex items-start justify-between p-6">
           <div className="flex items-start gap-3">
             <div className="flex-shrink-0">
-              <AlertCircle className="w-6 h-6 text-red-600" />
+              <AlertCircle className="w-6 h-6 text-red" />
             </div>
             <div>
               <h2 className="text-lg font-semibold text-gray-900">
